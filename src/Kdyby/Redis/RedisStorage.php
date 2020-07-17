@@ -393,6 +393,6 @@ class RedisStorage implements IMultiReadStorage
 	}
 
 	public function setPrefix($prefix){
-		return $this->prefix ;
+		$this->prefix = $prefix;
 	}
 }
