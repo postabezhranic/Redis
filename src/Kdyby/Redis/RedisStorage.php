@@ -51,6 +51,11 @@ class RedisStorage implements IMultiReadStorage
 	private $journal;
 
 	/**
+	 * @var string
+	 */
+	private $prefix = self::NS_NETTE;
+
+	/**
 	 * @var bool
 	 */
 	private $useLocks = TRUE;
@@ -276,7 +281,9 @@ class RedisStorage implements IMultiReadStorage
 	{
 		// cleaning using file iterator
 		if (!empty($conds[Cache::ALL])) {
-			if ($keys = $this->client->send('keys', [self::NS_NETTE . ':*'])) {
+
+			$keys = $this->client->send('keys', [$this->prefix . ':*']);
+			if ($keys) {
 				$this->client->send('del', $keys);
 			}
 
@@ -302,7 +309,7 @@ class RedisStorage implements IMultiReadStorage
 	 */
 	protected function formatEntryKey($key)
 	{
-		return self::NS_NETTE . ':' . str_replace(Cache::NAMESPACE_SEPARATOR, ':', $key);
+		return $this->prefix . ':' . \str_replace(Cache::NAMESPACE_SEPARATOR, ':', $key);
 	}
 
 
@@ -385,4 +392,7 @@ class RedisStorage implements IMultiReadStorage
 		}
 	}
 
+	public function setPrefix($prefix){
+		return $this->prefix ;
+	}
 }
